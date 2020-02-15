@@ -6,12 +6,15 @@ def best(energy, recovery, tasks, E):
         return energy * tasks[0]
     else:
         solution = 0
-        for x in range(0, energy + 1):
+        start = max(0, recovery + energy - E)
+        for x in range(start, energy + 1):
             gain = x * tasks[0]
             remaining = min(energy - x + recovery, E)
             total = gain + best(remaining, recovery, tasks[1:], E)
             if total > solution:
                 solution = total
+            else:
+                return solution
         return solution
 
 
