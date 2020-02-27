@@ -1,25 +1,23 @@
 import sys
 
 
-def best(energy, recovery, tasks, E):
-    if len(tasks) == 1:
-        return energy * tasks[0]
-    else:
-        solution = 0
-        start = max(0, recovery + energy - E)
-        for x in range(start, energy + 1):
-            gain = x * tasks[0]
-            remaining = min(energy - x + recovery, E)
-            total = gain + best(remaining, recovery, tasks[1:], E)
-            if total > solution:
-                solution = total
-            else:
-                return solution
-        return solution
+def best(start, end, E, r, tasks):
+    if len(tasks) == 0:
+        return 0
+    most = max(tasks)
+    pivot = tasks.index(most)
+    get = min(E, start + pivot * r)
+    recover = (len(tasks) - pivot - 1) * r
+    can_spend = max(0, min(E, get + recover - end))
+    energy = min(get, can_spend)
+    gain = energy * most
+    left = best(start, max(end, energy - r), E, r, tasks[:pivot])
+    right = best(r, end, E, r, tasks[pivot + 1:])
+    return left + gain + right
 
 
 def solve(e, r, n, tasks):
-    return best(e, r, tasks, e)
+    return best(e, 0, e, r, tasks)
 
 
 def readline():
